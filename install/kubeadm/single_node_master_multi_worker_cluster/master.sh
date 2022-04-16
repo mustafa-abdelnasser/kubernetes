@@ -14,7 +14,7 @@ pod_network_cidr="10.0.0.0/24"
 control_plane_endpoint=api-server-k85
 
 # install extra packages
-sudo yum install -y bash-completion vim
+sudo yum install -y bash-completion vim wget
 
 # disable linux swap and remove any existing swap partitions
 sudo swapoff -a
@@ -110,6 +110,11 @@ curl -L https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64
 sed -i 's/ghcr.io\/weaveworks\/launcher/docker.io\/weaveworks/g' weave.yaml
 kubectl -f weave.yaml apply
 
+# install crictl which provides a CLI for CRI-compatible container runtimes to interact with containerd
+CRICTL_VERSION="v1.23.0"
+curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/$CRICTL_VERSION/crictl-${CRICTL_VERSION}-linux-amd64.tar.gz --output crictl-${CRICTL_VERSION}-linux-amd64.tar.gz
+sudo tar zxvf crictl-$CRICTL_VERSION-linux-amd64.tar.gz -C /usr/local/bin
+rm -f crictl-$CRICTL_VERSION-linux-amd64.tar.gz
 
 # create and display join token command token will expire after 24H if not you can add --ttl 0 (never expire)
 kubeadm token create --print-join-command
