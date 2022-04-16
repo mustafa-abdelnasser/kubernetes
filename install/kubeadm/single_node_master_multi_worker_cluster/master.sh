@@ -116,5 +116,15 @@ curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/$CRICTL_V
 sudo tar zxvf crictl-$CRICTL_VERSION-linux-amd64.tar.gz -C /usr/local/bin
 rm -f crictl-$CRICTL_VERSION-linux-amd64.tar.gz
 
+## crictl configs as runtime endpoint config,..
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///run/containerd/containerd.sock
+image-endpoint: unix:///run/containerd/containerd.sock
+timeout: 2
+debug: false
+pull-image-on-create: false
+EOF
+
+
 # create and display join token command token will expire after 24H if not you can add --ttl 0 (never expire)
 kubeadm token create --print-join-command
